@@ -11,11 +11,76 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
 function UpdateCursor () {
     cursor.top = Math.floor(120 / Ratio) * (cursorPos + 1) - 2
 }
+function _5wire () {
+    blackwire = 0
+    yellowcount = 0
+    redcount = 0
+    for (let value of WireList) {
+        if (value == 0) {
+            redcount += 1
+        } else if (value == 4) {
+            blackwire += 1
+        } else if (value == 3) {
+            yellowcount += 1
+        }
+    }
+    if (WireList[4] == 4 && SerialNumber % 2 == 1) {
+        game.splash("cut the 4th wire")
+    } else if (redcount == 1 && yellowcount > 1) {
+        game.splash("cut the 1st wire")
+    } else if (blackwire == 0) {
+        game.splash("cut the 2nd wire")
+    } else {
+        game.splash("cut the 1st wire")
+    }
+}
+function _4wires () {
+    bluecounte = 0
+    yellowcount = 0
+    redcount = 0
+    for (let value of WireList) {
+        if (value == 0) {
+            redcount += 1
+        } else if (value == 2) {
+            bluecounte += 1
+        } else if (value == 3) {
+            yellowcount += 1
+        }
+    }
+    if (redcount > 1 && SerialNumber % 2 == 1) {
+        if (WireList[3] == 0) {
+            game.splash("cut the last wire")
+        } else if (WireList[2] == 0) {
+            game.splash("cut wire 3")
+        } else {
+            game.splash("cut wire 2")
+        }
+    } else if (WireList[3] == 3 && redcount == 0) {
+        game.splash("cut the 1st wire")
+    } else if (bluecounte == 1) {
+        game.splash("cut the 1st wire")
+    } else if (yellowcount == 0) {
+        game.splash("cut the last wire")
+    } else {
+        game.splash("cut the second wire")
+    }
+}
 function startPhase () {
     while (wireCount < 3 || wireCount > 6) {
         wireCount = game.askForNumber("# of wires? (3-6)", 1)
     }
 }
+controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (wireCount == 3) {
+        _3wires()
+    } else if (wireCount == 4) {
+        _4wires()
+    } else if (wireCount == 5) {
+        _5wire()
+    } else if (wireCount == 6) {
+        _6wire()
+    }
+})
 function InitSerial () {
     SerialNumber = game.askForNumber("Last Digit of Serial Number", 1)
 }
@@ -105,13 +170,68 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     cursorPos = cursorPos % wireCount
     UpdateCursor()
 })
+function _6wire () {
+    whitecount = 0
+    yellowcount = 0
+    redcount = 0
+    for (let value of WireList) {
+        if (value == 0) {
+            redcount += 1
+        } else if (value == 2) {
+            whitecount += 1
+        } else if (value == 3) {
+            yellowcount += 1
+        }
+    }
+    if (yellowcount == 0 && SerialNumber % 2 == 1) {
+        game.splash("cut the 3ed wire")
+    } else if (yellowcount == 1 && whitecount == 1) {
+        game.splash("cut the 4th wire")
+    } else if (redcount == 0) {
+        game.splash("cut the last wire")
+    } else {
+        game.splash("cut the 4th wire")
+    }
+}
+function _3wires () {
+    whitecount = 0
+    redcount = 0
+    bluecounte = 0
+    for (let value of WireList) {
+        if (value == 0) {
+            redcount += 1
+        } else if (value == 2) {
+            bluecounte += 1
+        } else if (value == 1) {
+            whitecount += 1
+        }
+    }
+    if (redcount == 0) {
+        game.splash("cut the 2nd wire")
+    } else if (WireList[2] == 1) {
+        game.splash("cut the last wire")
+    } else if (bluecounte > 1) {
+        if (WireList[2] == 2) {
+            game.splash("cut the last wire")
+        } else {
+            game.splash("cut the 2nd wire")
+        }
+    } else {
+        game.splash("cut the last wire")
+    }
+}
+let whitecount = 0
 let mySprite: Image = null
 let mySprite2: Sprite = null
 let sprite_list: Sprite[] = []
 let WireSprites: Image[] = []
 let colourList: number[] = []
-let WireList: number[] = []
+let bluecounte = 0
 let SerialNumber = 0
+let WireList: number[] = []
+let redcount = 0
+let yellowcount = 0
+let blackwire = 0
 let Ratio = 0
 let cursor: Sprite = null
 let cursorPos = 0
